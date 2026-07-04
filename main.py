@@ -27,16 +27,18 @@ class AskRequest(BaseModel):
     question: str
     mode: int
 
+# ==================== FIX: Added Root Endpoint ====================
+@app.get("/")
+def root():
+    return {"status": "ok", "message": "IntelliDoc API is running"}
 
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
-
 @app.get("/index-status")
 def index_status():
     return {"indexed": os.path.isdir(INDEX_PATH)}
-
 
 @app.post("/ingest")
 async def ingest(file: UploadFile = File(...)):
@@ -52,7 +54,6 @@ async def ingest(file: UploadFile = File(...)):
         return {"status": "ok", "chunks": len(chunks)}
     finally:
         os.unlink(tmp_path)
-
 
 @app.post("/ask")
 def ask(req: AskRequest):
